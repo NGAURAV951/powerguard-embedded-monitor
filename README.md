@@ -107,3 +107,11 @@ These are learning connections only. This independent student project is not aff
 Be ready to explain the threshold rules, input validation, why power is reported in VA, the difference between the C demo and Python analyzer, and which elements remain simulated.
 
 See [architecture notes](docs/architecture.md) and [test plan](docs/test-plan.md).
+
+---
+
+## Author
+
+**Designed and developed by Nikhil Gaurav**  
+GitHub: [@NGAURAV951](https://github.com/NGAURAV951)  
+© 2026 Nikhil Gaurav
