@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+build/
+dist/
+*.egg-info/
+power_monitor
+power_monitor.exe
+*.o
+.DS_Store
+.vscode/
+.idea/
