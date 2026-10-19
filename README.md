@@ -10,6 +10,12 @@ After GitHub Pages deployment completes, the dashboard will be available at:
 
 https://ngaurav951.github.io/powerguard-embedded-monitor/
 
+## Android APK
+
+The native Android wrapper source is in `android/`. The app bundles the dashboard and the synthetic CSV sample so the demo can open offline. Once the **Build Android APK** workflow succeeds, download the installable debug APK from the [latest PowerGuard Android release](https://github.com/NGAURAV951/powerguard-embedded-monitor/releases/download/android-latest/PowerGuard.apk). The workflow also publishes a `PowerGuard-Android-APK` artifact for 30 days.
+
+This is a debug build for demonstration, not a Play Store release. Because this is a software prototype, it still does not receive live sensor readings or control/protect real equipment.
+
 The web app lets you review the sample readings, filter normal/alert records, inspect the voltage trend, and export the visible records to CSV. It works without a third-party charting library. On supported browsers, you can install it from the browser menu as an app and reopen the cached demo offline.
 
 All dashboard readings are sample data. The app does not claim live monitoring or connect to a microcontroller.
@@ -29,8 +35,10 @@ All dashboard readings are sample data. The app does not claim live monitoring o
 ~~~text
 .
 ├── .github/workflows/
-│   ├── ci.yml                 # Python tests and C/Python demo checks
-│   └── pages.yml              # GitHub Pages deployment
+│   ├── ci.yml                 # Python/C checks and dashboard JS syntax
+│   ├── pages.yml              # GitHub Pages deployment
+│   └── android-apk.yml        # Android APK build and release
+├── android/                   # Native Android WebView wrapper and bundled site
 ├── data/sample_readings.csv   # Synthetic input records for the Python demo
 ├── docs/
 │   ├── architecture.md        # Signal path, design choices, and limitations
