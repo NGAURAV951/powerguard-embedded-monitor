@@ -22,3 +22,5 @@ jobs:
         run: ./power_monitor
       - name: Run Python demo
         run: python powerguard.py --input data/sample_readings.csv
+      - name: Check dashboard JavaScript syntax
+        run: node --check site/app.js
