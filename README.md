@@ -1,117 +1,137 @@
 # PowerGuard — Embedded Power & Equipment Health Monitor
 
-A student-built ECE portfolio project demonstrating embedded C, sensor-data handling, threshold-based fault detection, Python analysis, unit tests, and continuous integration.
+PowerGuard is my final-year B.Tech ECE portfolio project for exploring how embedded software can flag electrical and temperature readings that fall outside a set of limits. The repository combines a small C example, a Python CSV analyzer, tests, and a web dashboard that can also be installed as a Progressive Web App (PWA).
 
-> **Status:** simulation-first prototype. All supplied CSV readings are synthetic. No physical sensors, calibrated instruments, or industrial deployment have been tested.
+**Current status:** software prototype using synthetic sample readings. It is not connected to live sensors and has not been validated on physical equipment.
 
-## What it does
+## Try the dashboard
 
-- Reads voltage, current, and temperature measurements from CSV.
-- Calculates apparent power as voltage × current, reported in VA.
-- Flags under-voltage, over-voltage, high current, and high temperature.
-- Provides a portable embedded-C example using the same basic rules.
-- Includes repeatable unit tests and a GitHub Actions workflow.
+After GitHub Pages deployment completes, the dashboard will be available at:
 
-## Repository structure
+https://ngaurav951.github.io/powerguard-embedded-monitor/
 
-```text
-powerguard/
-├── README.md
-├── powerguard.py
-├── data/sample_readings.csv
-├── firmware/power_monitor.c
-├── tests/test_powerguard.py
-├── docs/architecture.md
-├── docs/test-plan.md
-├── .github/workflows/ci.yml
-└── .gitignore
-```
+The web app lets you review the sample readings, filter normal/alert records, inspect the voltage trend, and export the visible records to CSV. It works without a third-party charting library. On supported browsers, you can install it from the browser menu as an app and reopen the cached demo offline.
 
-## Run the Python demo
+All dashboard readings are sample data. The app does not claim live monitoring or connect to a microcontroller.
 
-Requires Python 3.10+; no third-party packages are needed.
+## What is implemented
+
+- Python reads and validates CSV readings for voltage, current, and temperature.
+- Threshold rules flag under-voltage, over-voltage, high current, and high temperature.
+- Apparent power is calculated as voltage multiplied by current and shown in VA.
+- A C example demonstrates the same basic threshold checks using an in-code sample array.
+- Unit tests cover normal readings, alert boundaries, invalid values, and the sample file.
+- GitHub Actions runs the existing test/build checks and deploys the static dashboard to GitHub Pages after a successful push to the main branch.
+- The responsive PWA dashboard displays the bundled synthetic sample dataset, supports searching/filtering, and exports filtered records.
+
+## Repository layout
+
+~~~text
+.
+├── .github/workflows/
+│   ├── ci.yml                 # Python tests and C/Python demo checks
+│   └── pages.yml              # GitHub Pages deployment
+├── data/sample_readings.csv   # Synthetic input records for the Python demo
+├── docs/
+│   ├── architecture.md        # Signal path, design choices, and limitations
+│   └── test-plan.md           # Test scenarios and validation notes
+├── firmware/power_monitor.c   # Embedded-C threshold logic example
+├── site/                      # Website and installable PWA dashboard
+├── tests/
+│   ├── test_powerguard.py
+│   └── test_site.py
+└── powerguard.py               # CSV validation and terminal report
+~~~
+
+## Run the Python analyzer
+
+Requires Python 3.10 or newer. It uses the Python standard library only.
 
 Windows PowerShell:
 
-```powershell
+~~~powershell
 py powerguard.py --input data/sample_readings.csv
 py -m unittest discover -s tests -v
-```
+~~~
 
 Linux/macOS:
 
-```bash
+~~~bash
 python3 powerguard.py --input data/sample_readings.csv
 python3 -m unittest discover -s tests -v
-```
+~~~
 
-## Compile and run the C demo
+The terminal report lists each reading, the calculated VA value, its status, and any threshold flags.
+
+## Compile the embedded-C example
 
 With GCC installed:
 
-```bash
+~~~bash
 gcc -std=c99 -Wall -Wextra -pedantic firmware/power_monitor.c -o power_monitor
-```
+~~~
 
-PowerShell:
+Run it on Windows PowerShell with:
 
-```powershell
+~~~powershell
 .\power_monitor.exe
-```
+~~~
 
-Linux/macOS:
+Or on Linux/macOS with:
 
-```bash
+~~~bash
 ./power_monitor
-```
+~~~
 
-The C program uses an in-code sample array standing in for sensor-driver output, so a microcontroller SDK is not required for this demo.
+The C program uses a small in-code array that stands in for sensor/ADC output. It is a portable logic demonstration, not firmware ready to flash to a specific board.
 
-## Example thresholds
+## Run the website locally
 
-| Signal | Demo rule |
+From the repository root, start Python’s simple local web server:
+
+~~~powershell
+py -m http.server 8000 --directory site
+~~~
+
+Then open http://localhost:8000 in a browser. On macOS/Linux, use:
+
+~~~bash
+python3 -m http.server 8000 --directory site
+~~~
+
+A web server is needed for the CSV fetch and service worker; opening the HTML file directly with a file URL will not exercise those features.
+
+## Example threshold rules
+
+| Measurement | Demo rule |
 |---|---:|
-| Voltage | Below 207 V → under-voltage alert |
-| Voltage | Above 253 V → over-voltage alert |
-| Current | Above 1.50 A → high-current alert |
-| Temperature | 60 °C or higher → high-temperature alert |
+| Voltage | Below 207 V → under-voltage flag |
+| Voltage | Above 253 V → over-voltage flag |
+| Current | Above 1.50 A → high-current flag |
+| Temperature | 60 °C or higher → high-temperature flag |
 
-These are illustrative software thresholds only. They are not certified safety limits and must not be used to protect real equipment without appropriate engineering review.
+These values are illustrative software thresholds, not certified safety limits. They must not be used to protect real equipment.
 
-## ECE concepts demonstrated
+## Engineering notes and limitations
 
-- Sensor / ADC data path concepts
-- Embedded C decision logic
-- Python data handling and validation
-- I²C/embedded-systems concepts can be considered future extensions, not current implementation
-- Fault flags, test cases, and CI
-- Unit-aware reporting: voltage (V), current (A), temperature (°C), apparent power (VA)
+- The included CSV rows and the dashboard dataset are synthetic examples.
+- No physical sensor, ADC, calibration procedure, target board, or reference instrument has been tested as part of this repository.
+- Voltage × current is shown as apparent power in volt-amperes (VA), not real AC power in watts. Measuring real power requires power-factor information or synchronized voltage/current waveform measurements.
+- The thresholds are fixed examples in the prototype. A practical device would need equipment-specific limits, appropriate sensor conditioning, isolation, fault handling, and safety review.
+- Never connect a microcontroller or breadboard directly to mains voltage. Any physical AC measurement needs correctly rated isolated sensing hardware and qualified supervision.
 
-## Important engineering notes
+## What I want to improve next
 
-- Voltage × current is apparent power in VA for this demo; it is **not** a measurement of real AC power in watts. Real power requires suitable power-factor measurement or synchronized voltage/current waveform sampling.
-- All values in `data/sample_readings.csv` are synthetic example readings.
-- Do not claim physical accuracy or hardware validation until you build, measure, and document a real prototype.
-- Never connect a microcontroller or breadboard directly to mains voltage. Real AC measurements require suitably rated, isolated sensing equipment, protection, and qualified supervision.
+1. Select a target microcontroller and document its actual ADC/peripheral interface.
+2. Add an input-driver layer and test it with low-voltage signals using a safe setup.
+3. Measure filtering behaviour and record response time and error against a reference instrument.
+4. Add serial telemetry only after the sensor and firmware interfaces are defined.
 
-## Employer relevance
-
-- **Texas Instruments:** embedded C, sensor/ADC data paths, fault logic, and validation.
-- **BEL:** deterministic monitoring, telemetry-style data, fault flags, and test evidence.
-- **Reliance Industries:** a starting point for equipment-condition and electrical-parameter monitoring.
-
-These are learning connections only. This independent student project is not affiliated with or endorsed by those companies.
-
-## Interview preparation
-
-Be ready to explain the threshold rules, input validation, why power is reported in VA, the difference between the C demo and Python analyzer, and which elements remain simulated.
-
-See [architecture notes](docs/architecture.md) and [test plan](docs/test-plan.md).
-
----
+I have kept those items as future work rather than presenting them as completed features.
 
 ## Author
 
-**Designed and developed by Nikhil Gaurav**  
-GitHub: [@NGAURAV951](https://github.com/NGAURAV951)  
-© 2026 Nikhil Gaurav
+**Nikhil Gaurav** · B.Tech Electronics and Communication Engineering  
+GitHub: https://github.com/NGAURAV951
+
+This is an independent learning project and is not affiliated with or endorsed by any employer or equipment manufacturer.
