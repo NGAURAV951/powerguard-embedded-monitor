@@ -39,6 +39,11 @@ jobs:
         with:
           gradle-version: "8.13"
 
+      - name: Bundle the latest website into the Android app
+        run: |
+          mkdir -p android/app/src/main/assets/site
+          rsync -a --delete site/ android/app/src/main/assets/site/
+
       - name: Build installable debug APK
         run: gradle --no-daemon --stacktrace -p android assembleDebug
 
