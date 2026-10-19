@@ -17,3 +17,11 @@
 
 /* Small shared elements and error/loading states. */
 .rule-symbol{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:9px;font-size:10px;font-weight:900}.loading-state{padding:35px 15px;text-align:center;color:var(--dim);font-size:11px}.caption-dot{width:6px;height:6px;display:inline-block;background:var(--red);border-radius:50%;margin-right:6px}.metric-glyph{line-height:1}.rule-symbol-blue{color:var(--blue);background:rgba(124,174,255,.1)}.rule-symbol-orange{color:var(--orange);background:rgba(244,182,106,.1)}.rule-symbol-red{color:var(--red);background:rgba(242,124,139,.1)}.rule-symbol-violet{color:var(--violet);background:rgba(181,160,255,.1)}
+
+/* Layout details used by the dashboard markup. */
+.hero-meta-note{color:var(--dim);font-size:10px}
+.signal-voltage{position:relative}
+.metric-line-green:after{background:var(--teal);width:64%}
+.dashboard-section{padding-top:72px}
+.table-scroll{width:100%;overflow-x:auto}
+@media(max-width:760px){.table-scroll{overscroll-behavior-x:contain}}
