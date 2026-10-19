@@ -23,8 +23,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Configure GitHub Pages
+      - name: Enable and configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload dashboard and PWA
         uses: actions/upload-pages-artifact@v3
         with:
