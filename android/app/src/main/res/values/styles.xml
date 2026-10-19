@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PowerGuard" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#55DFC5</item>
+        <item name="android:statusBarColor">#0A1321</item>
+        <item name="android:navigationBarColor">#0A1321</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">#0A1321</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>
