@@ -1,0 +1,81 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: powerguard-android-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and publish PowerGuard APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+      - name: Set up Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Build installable debug APK
+        run: gradle --no-daemon --stacktrace -p android assembleDebug
+
+      - name: Prepare APK and checksum
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/PowerGuard.apk
+          cd dist
+          sha256sum PowerGuard.apk > PowerGuard.apk.sha256
+          ls -lh PowerGuard.apk PowerGuard.apk.sha256
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PowerGuard-Android-APK
+          path: |
+            dist/PowerGuard.apk
+            dist/PowerGuard.apk.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish latest APK download
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: PowerGuard Android APK (latest)
+          body: |
+            Installable Android debug build of PowerGuard.
+
+            The dashboard and sample CSV are bundled in the APK, so the demo can open without a network connection. All readings are synthetic; the app is not connected to live sensors or validated for protecting real equipment.
+
+            This APK is intended for student-project demonstration and testing, not Play Store distribution.
+          files: |
+            dist/PowerGuard.apk
+            dist/PowerGuard.apk.sha256
+          overwrite_files: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
